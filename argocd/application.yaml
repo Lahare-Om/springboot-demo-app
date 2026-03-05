@@ -6,7 +6,6 @@ metadata:
 spec:
   project: default
   source:
-    # Update this to your repo URL and preferred branch.
     repoURL: https://github.com/omlahare/springboot-demo-app.git
     targetRevision: main
     path: k8s
@@ -19,4 +18,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=false
-
