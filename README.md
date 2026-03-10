@@ -1,39 +1,140 @@
-# Spring Boot Demo App (Local Docker/K8s/ArgoCD testing)
+# Spring Boot Demo App – Local Docker, Kubernetes & Argo CD GitOps Demo
 
-This folder contains a small **Spring Boot** web application intended to support local testing of:
-- Docker containerization (port **8080**)
-- Local Kubernetes deployment (Kind/Minikube)
-- GitOps-style deployment via Argo CD
+This repository contains a **Spring Boot + React application** used to demonstrate a **local DevOps and GitOps deployment pipeline**.
 
-It also includes a small **React** UI (Vite) that exercises the API and Actuator health endpoints.
+The project shows how a containerized application can be deployed locally using:
 
-## Endpoints
+* **Docker** for containerization
+* **Kubernetes (Kind / Minikube)** for orchestration
+* **Argo CD** for GitOps-based deployments
+* **React (Vite)** for the frontend UI
 
-- **Web UI**
-  - `GET /` → React UI
+The goal is to simulate a **real-world deployment workflow entirely on a developer laptop**.
 
-- **App APIs**
-  - `GET /api/hello` → basic response
-  - `GET /api/time` → current server time
-  - `POST /api/echo` → echoes request body
-  - `GET /api/env` → shows selected environment variables (safe subset)
+---
 
-- **Actuator**
-  - `GET /actuator/health`
-  - `GET /actuator/health/liveness`
-  - `GET /actuator/health/readiness`
-  - `GET /actuator/info`
+# Architecture
 
-## Build and run (Docker)
+The system demonstrates a **GitOps deployment pipeline** where the Kubernetes cluster state is controlled by Git.
 
-From the repo root:
+```
+Developer
+   │
+   ▼
+GitHub Repository
+   │
+   ▼
+Argo CD (GitOps Controller)
+   │
+   ▼
+Kubernetes Cluster (Kind / Minikube)
+   │
+   ▼
+Deployment
+   │
+   ▼
+Pods
+   │
+   ▼
+Service
+   │
+   ▼
+Browser / API Client
+```
+
+### Application Architecture
+
+```
+React UI
+   │
+   ▼
+Spring Boot API
+   │
+   ▼
+Docker Container
+   │
+   ▼
+Kubernetes Pod
+```
+
+---
+
+# Technologies Used
+
+* Java 21
+* Spring Boot
+* React (Vite)
+* Docker
+* Kubernetes
+* Kind / Minikube
+* Argo CD
+* kubectl
+
+---
+
+# Application Endpoints
+
+### Web UI
+
+```
+GET /
+```
+
+Returns the React UI.
+
+---
+
+### Application APIs
+
+```
+GET /api/hello
+```
+
+Returns a simple greeting response.
+
+```
+GET /api/time
+```
+
+Returns the current server time.
+
+```
+POST /api/echo
+```
+
+Echoes the request body.
+
+```
+GET /api/env
+```
+
+Returns selected environment variables (safe subset).
+
+---
+
+### Spring Boot Actuator
+
+```
+GET /actuator/health
+GET /actuator/health/liveness
+GET /actuator/health/readiness
+GET /actuator/info
+```
+
+These endpoints are used by Kubernetes health probes.
+
+---
+
+# Build and Run (Docker)
+
+From the repository root:
 
 ```bash
 docker build -t springboot-demo-app:local ./springboot-demo-app
 docker run --rm -p 8080:8080 springboot-demo-app:local
 ```
 
-Test:
+Test the API:
 
 ```bash
 curl http://localhost:8080/api/hello
@@ -42,13 +143,17 @@ curl http://localhost:8080/actuator/health
 
 Open the UI:
 
-```bash
-start http://localhost:8080/
+```
+http://localhost:8080
 ```
 
-## Local dev (React hot reload)
+---
 
-Run Spring Boot on 8080 (any method you prefer), then run the React dev server on 5173:
+# Local Development (React Hot Reload)
+
+Run the Spring Boot backend first (any method).
+
+Then start the React dev server:
 
 ```bash
 cd springboot-demo-app/frontend
@@ -56,45 +161,225 @@ npm install
 npm run dev
 ```
 
-The dev server proxies `/api/*` and `/actuator/*` to `http://localhost:8080`.
+The dev server runs on:
 
-## Deploy locally (Kind)
+```
+http://localhost:5173
+```
 
-Create a cluster (example):
+API requests are proxied to:
+
+```
+http://localhost:8080
+```
+
+---
+
+# Deploy Locally with Kubernetes (Kind)
+
+Create a Kubernetes cluster:
 
 ```bash
 kind create cluster
 ```
 
-Load the locally-built image into Kind:
+Load the Docker image into the cluster:
 
 ```bash
 kind load docker-image springboot-demo-app:local
 ```
 
-Apply manifests:
+Deploy the application:
 
 ```bash
 kubectl apply -f ./springboot-demo-app/k8s
 ```
 
-Port-forward:
+Check pods:
+
+```bash
+kubectl get pods
+```
+
+Access the application:
 
 ```bash
 kubectl port-forward svc/springboot-demo-app 8080:8080
 ```
 
-## Deploy locally (Minikube)
+Open:
+
+```
+http://localhost:8080
+```
+
+---
+
+# Deploy Locally with Kubernetes (Minikube)
+
+Start the cluster:
 
 ```bash
 minikube start
+```
+
+Load the image:
+
+```bash
 minikube image load springboot-demo-app:local
+```
+
+Deploy the manifests:
+
+```bash
 kubectl apply -f ./springboot-demo-app/k8s
+```
+
+Port forward:
+
+```bash
 kubectl port-forward svc/springboot-demo-app 8080:8080
 ```
 
-## Notes
-- The app listens on **8080**.
-- Probes are configured for `/actuator/health/liveness` and `/actuator/health/readiness`.
-- This app is intentionally simple; it’s a stable target for deployment automation exercises.
+---
 
+# GitOps Deployment with Argo CD
+
+Argo CD continuously monitors the Git repository and ensures the Kubernetes cluster matches the desired state defined in Git.
+
+Workflow:
+
+```
+Git Push
+   │
+   ▼
+Argo CD detects change
+   │
+   ▼
+Kubernetes Deployment updated
+   │
+   ▼
+New Pods created
+```
+
+---
+
+# GitOps Demo
+
+1. Edit the Kubernetes deployment manifest:
+
+```
+springboot-demo-app/k8s/deployment.yaml
+```
+
+Change:
+
+```
+replicas: 3
+```
+
+to:
+
+```
+replicas: 5
+```
+
+2. Commit and push:
+
+```bash
+git add .
+git commit -m "scale deployment"
+git push
+```
+
+3. Argo CD automatically detects the change and syncs the cluster.
+
+Verify:
+
+```bash
+kubectl get pods
+```
+
+You should see additional pods created.
+
+---
+
+# Automation Scripts
+
+Helper scripts are available in the `scripts` folder.
+
+Examples:
+
+Deploy to a Kind cluster:
+
+```bash
+./scripts/deploy-kind.ps1
+```
+
+Check cluster status:
+
+```bash
+./scripts/check-status.ps1
+```
+
+Reset the cluster:
+
+```bash
+./scripts/reset-cluster.ps1
+```
+
+---
+
+# Project Documentation
+
+Additional documentation is available in the `docs` folder.
+
+```
+docs/
+│
+├ architecture.md   → system architecture
+├ quickstart.md     → quickstart setup guide
+├ ops-runbook.md    → troubleshooting and operations
+└ smoke-test.md     → application verification tests
+```
+
+---
+
+# Health Probes
+
+Kubernetes probes are configured for:
+
+```
+/actuator/health/liveness
+/actuator/health/readiness
+```
+
+These ensure Kubernetes can detect unhealthy containers and restart them if necessary.
+
+---
+
+# Notes
+
+* The application runs on **port 8080**
+* Docker image tag used for local deployments:
+
+```
+springboot-demo-app:local
+```
+
+* Designed for **local Kubernetes testing and DevOps exercises**
+* No external dependencies (database, message broker, etc.)
+
+---
+
+# Summary
+
+This project demonstrates a complete **local DevOps workflow** including:
+
+* Containerization with Docker
+* Kubernetes deployment
+* Horizontal pod scaling
+* GitOps deployment using Argo CD
+* Automated synchronization between Git and the cluster
+
+It serves as a **simple, stable application for testing deployment pipelines and GitOps workflows**.
