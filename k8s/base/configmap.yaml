@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  SERVICE_NAME: springboot-demo-app
+  ENVIRONMENT: local
