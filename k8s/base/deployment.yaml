@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: omlahare/springboot-demo-app:bbc2d86c8b9e5a1f0c8b2e7d9c3f1a2b3c4d5
+          image: omlahare/springboot-demo-app:304c2c36117078e0dc20259895185e1986551448
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
