@@ -8,3 +8,4 @@ resources:
   - base/configmap.yaml
   - base/deployment.yaml
   - base/service.yaml
+  - ingress.yaml
