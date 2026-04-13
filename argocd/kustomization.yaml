@@ -8,3 +8,4 @@ resources:
 - ./server
 - ./redis
 - python-app.yaml
+- node-api.yaml

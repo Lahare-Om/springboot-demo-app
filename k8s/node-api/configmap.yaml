@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-app-config
+  labels:
+    app.kubernetes.io/name: node-demo-app
+data:
+  APP_NAME: "node-demo-app"
+  APP_VERSION: "0.1.0"
+  ENVIRONMENT: "kubernetes"
+  PORT: "3000"

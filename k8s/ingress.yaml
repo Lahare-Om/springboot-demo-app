@@ -25,3 +25,10 @@ spec:
                 name: python-demo-app
                 port:
                   number: 8000
+          - path: /api/node(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: node-demo-app
+                port:
+                  number: 3000
