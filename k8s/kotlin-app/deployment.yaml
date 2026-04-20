@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kotlin-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kotlin-app
+  template:
+    metadata:
+      labels:
+        app: kotlin-app
+    spec:
+      containers:
+      - name: kotlin-app
+        image: kotlin-app:0.1.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kotlin-app
+spec:
+  selector:
+    app: kotlin-app
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

@@ -3,7 +3,6 @@ kind: Kustomization
 
 namespace: springboot-demo
 
-
 resources:
   - base/configmap.yaml
   - base/deployment.yaml

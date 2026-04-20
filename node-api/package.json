@@ -1,0 +1,14 @@
+{
+  "name": "node-demo-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Demo Node.js service for local Docker/K8s/ArgoCD exercises",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/server.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

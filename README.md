@@ -1,15 +1,16 @@
 # Spring Boot Demo App – Local Docker, Kubernetes & Argo CD GitOps Demo
 
-This repository contains a **Spring Boot + React application** used to demonstrate a **local DevOps and GitOps deployment pipeline**.
+This repository contains a **Spring Boot + React + Python microservice application** used to demonstrate a **local DevOps and GitOps deployment pipeline**.
 
-The project shows how a containerized application can be deployed locally using:
+The project shows how **multiple containerized applications** can be deployed locally using:
 
 * **Docker** for containerization
 * **Kubernetes (Kind / Minikube)** for orchestration
 * **Argo CD** for GitOps-based deployments
 * **React (Vite)** for the frontend UI
+* **Python (FastAPI)** for additional microservices
 
-The goal is to simulate a **real-world deployment workflow entirely on a developer laptop**.
+The goal is to simulate a **real-world multi-service deployment workflow entirely on a developer laptop**.
 
 ---
 
@@ -30,13 +31,13 @@ Argo CD (GitOps Controller)
 Kubernetes Cluster (Kind / Minikube)
    │
    ▼
-Deployment
+Deployments
    │
    ▼
-Pods
+Pods (Spring Boot + Python)
    │
    ▼
-Service
+Services
    │
    ▼
 Browser / API Client
@@ -48,13 +49,16 @@ Browser / API Client
 React UI
    │
    ▼
-Spring Boot API
+Spring Boot API (Port 8080)
    │
    ▼
-Docker Container
+Python API (Port 8000)
    │
    ▼
-Kubernetes Pod
+Docker Containers
+   │
+   ▼
+Kubernetes Pods
 ```
 
 ---
@@ -63,6 +67,8 @@ Kubernetes Pod
 
 * Java 21
 * Spring Boot
+* Python 3.11+
+* FastAPI
 * React (Vite)
 * Docker
 * Kubernetes
@@ -84,7 +90,7 @@ Returns the React UI.
 
 ---
 
-### Application APIs
+### Spring Boot APIs (Port 8080)
 
 ```
 GET /api/hello
@@ -97,6 +103,28 @@ GET /api/time
 ```
 
 Returns the current server time.
+
+---
+
+### Python APIs (Port 8000)
+
+```
+GET /health
+```
+
+Returns health check status.
+
+```
+GET /api/info
+```
+
+Returns application information.
+
+```
+GET /api/echo/{message}
+```
+
+Echoes back the provided message with timestamp.
 
 ```
 POST /api/echo
