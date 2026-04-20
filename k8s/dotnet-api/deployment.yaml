@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: dotnet-api
-        image: dotnet-api:latest
+        image: dotnet-api:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

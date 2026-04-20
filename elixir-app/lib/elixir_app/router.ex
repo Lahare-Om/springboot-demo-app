@@ -15,12 +15,16 @@ defmodule ElixirApp.Router do
 
   defp handle_index(conn) do
     response = Jason.encode!(%{message: "Hello from Elixir App", version: "1.0.0"})
-    send_resp(conn, 200, response) |> put_resp_header("content-type", "application/json")
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(200, response)
   end
 
   defp handle_health(conn) do
     hostname = elem(System.cmd("hostname", []), 0) |> String.trim()
     response = Jason.encode!(%{status: "healthy", hostname: hostname})
-    send_resp(conn, 200, response) |> put_resp_header("content-type", "application/json")
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(200, response)
   end
 end

@@ -1,9 +1,5 @@
-FROM php:8.2-fpm-alpine
-WORKDIR /var/www/html
-COPY index.php .
-
-FROM nginx:alpine
-COPY --from=0 /var/www/html /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM php:8.2-cli-alpine
+WORKDIR /app
+COPY index.php router.php ./
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["php", "-S", "0.0.0.0:8080", "router.php"]

@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/springboot-demo-app
-    targetRevision: HEAD
+    repoURL: https://github.com/Lahare-Om/springboot-demo-gitops
+    targetRevision: deploy
     path: k8s/elixir-app
   destination:
     server: https://kubernetes.default.svc

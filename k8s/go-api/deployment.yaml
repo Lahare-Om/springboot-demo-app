@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: go-api
-        image: go-api:latest
+        image: go-api:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

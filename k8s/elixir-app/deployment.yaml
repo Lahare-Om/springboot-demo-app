@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: elixir-app
-        image: elixir-app:latest
+        image: elixir-app:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

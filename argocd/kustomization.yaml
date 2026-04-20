@@ -7,6 +7,7 @@ resources:
 - ./repo-server
 - ./server
 - ./redis
+- application.yaml
 - python-app.yaml
 - node-api.yaml
 - go-api.yaml

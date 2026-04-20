@@ -44,25 +44,46 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/springboot-demo-app:${{ github.sha }}
 
-      - name: Switch to deployment branch
+      - name: Prepare deployment worktree
         run: |
-          git fetch origin
-          if git show-ref --verify --quiet refs/remotes/origin/$DEPLOY_BRANCH; then
-            git checkout -B $DEPLOY_BRANCH origin/$DEPLOY_BRANCH
+          set -euo pipefail
+          DEPLOY_DIR="$(mktemp -d)"
+          echo "DEPLOY_DIR=$DEPLOY_DIR" >> "$GITHUB_ENV"
+
+          git fetch origin main
+          git fetch origin "$DEPLOY_BRANCH" || true
+
+          if git show-ref --verify --quiet "refs/remotes/origin/$DEPLOY_BRANCH"; then
+            git worktree add -b "$DEPLOY_BRANCH" "$DEPLOY_DIR" "origin/$DEPLOY_BRANCH"
+            cd "$DEPLOY_DIR"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git merge --no-edit "${{ github.sha }}"
           else
-            git checkout -b $DEPLOY_BRANCH
+            git worktree add -b "$DEPLOY_BRANCH" "$DEPLOY_DIR" "${{ github.sha }}"
+            cd "$DEPLOY_DIR"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           fi
 
       - name: Update Kubernetes manifest image
+        working-directory: ${{ env.DEPLOY_DIR }}
         run: |
           sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/springboot-demo-app:${{ github.sha }}|" k8s/base/deployment.yaml
 
       - name: Commit updated manifest
+        working-directory: ${{ env.DEPLOY_DIR }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add k8s/base/deployment.yaml
           git diff --cached --quiet || git commit -m "Update deployment image to ${{ github.sha }}"
 
       - name: Push updated manifest
+        working-directory: ${{ env.DEPLOY_DIR }}
         run: git push origin HEAD:$DEPLOY_BRANCH
+
+      - name: Cleanup deployment worktree
+        if: always()
+        run: |
+          if [ -n "${DEPLOY_DIR:-}" ]; then
+            git worktree remove --force "$DEPLOY_DIR" || true
+          fi

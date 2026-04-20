@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: rust-api
-        image: rust-api:latest
+        image: rust-api:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

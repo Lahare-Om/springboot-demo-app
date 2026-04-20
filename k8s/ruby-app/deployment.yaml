@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: ruby-app
-        image: ruby-app:latest
+        image: ruby-app:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

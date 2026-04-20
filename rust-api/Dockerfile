@@ -1,4 +1,5 @@
 FROM rust:1.75-alpine AS builder
+RUN apk add --no-cache musl-dev
 WORKDIR /app
 COPY Cargo.toml .
 RUN mkdir src && echo "fn main() {}" > src/main.rs

@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: kotlin-app
-        image: kotlin-app:latest
+        image: kotlin-app:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:

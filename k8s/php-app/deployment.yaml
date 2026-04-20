@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: php-app
-        image: php-app:latest
+        image: php-app:0.1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         livenessProbe:
